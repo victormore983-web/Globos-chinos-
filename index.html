@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vic Persi</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #030208;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        #webgl-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .top-bar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .icon-btn:active {
+            transform: scale(0.92);
+            background: rgba(255, 215, 0, 0.3);
+        }
+
+        .wish-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            padding: 20px;
+        }
+
+        .wish-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .wish-card {
+            background: linear-gradient(135deg, rgba(35, 15, 45, 0.92), rgba(15, 8, 25, 0.95));
+            border: 1.5px solid rgba(255, 215, 0, 0.5);
+            box-shadow: 0 0 35px rgba(255, 182, 193, 0.3), inset 0 0 15px rgba(255, 215, 0, 0.2);
+            border-radius: 24px;
+            padding: 30px 25px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            transform: translateY(30px) scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #fff;
+        }
+
+        .wish-modal.active .wish-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .wish-card .close-btn {
+            z-index: 20;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #ffb7c5;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .wish-card .close-btn:hover {
+            background: rgba(255, 182, 193, 0.4);
+            color: #fff;
+        }
+
+        .wish-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            display: block;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .wish-card h3 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 28px;
+            color: #ffd700;
+            margin-bottom: 12px;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        }
+
+        .wish-card p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #f0e6ff;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .wish-card .tag {
+            font-size: 12px;
+            color: #ff9ebb;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .click-hint {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            color: rgba(255, 235, 205, 0.85);
+            font-size: 13px;
+            letter-spacing: 1px;
+            pointer-events: none;
+            /* QUAN TRỌNG: Tránh cản trở chạm xoay camera */
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+            animation: pulseHint 2s infinite alternate;
+            text-align: center;
+            width: 90%;
+        }
+
+        @keyframes pulseHint {
+            0% {
+                opacity: 0.4;
+            }
+
+            100% {
+                opacity: 0.95;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <script>
+/* ============================================================
+   PATCH LOCAL (Trungthu3D) - parte 1/2
+   Se carga ANTES de assets/script.js
+   1) Anula el bloqueo de dominio del script empaquetado.
+   2) Provee wishes.json tambien en file:// (evita el error CORS).
+   ============================================================ */
+(function () {
+    'use strict';
+
+    /* ---------- 1) BLOQUEO DE DOMINIO ---------- */
+    var _atob = window.atob;
+    window.atob = function (s) {
+        var r = _atob(s);
+        return s === 'cGFuYmFwLmdpdGh1Yi5pbw==' ? location.hostname : r;
+    };
+
+    /* ---------- 2) wishes.json sin servidor web ---------- */
+    /* Copia de assets/wishes.json. Si lo editas, actualiza tambien este bloque. */
+    var WISHES_FALLBACK = {"users":{"123":{"name":"Para ti","tag":"Feliz y pacífico Festival de Mitad de Otoño","music":"./assets/1.mp3","messages":["¡Te deseo a ti y a tu familia una temporada de Mitad de Otoño muy unida, llena de alegría y felicidad!","Deseo que todos tus deseos de esta noche se hagan realidad.","Bajo la cálida luna llena, deseo que nuestra amistad y amor permanezcan fuertes para siempre."],"images":["./assets/1.jpg","./assets/2.jpg","./assets/3.jpg"]},"sangp":{"name":"Para Dịuuo","tag":"Feliz y pacífico Festival de Mitad de Otoño","music":"./assets/bongtrang.mp3","messages":["No importa lo ocupada que estés, recuerda comer bien, no te saltes ninguna comida, pequeña 🌷","En esta Mitad de Otoño te escribo una canción de amor. Acordes tengo pocos, ¡pero encajamos mucho!","Caminemos juntos este otoño, para que ambos vayamos juntos a celebrar la Mitad de Otoño.","Si estás cansada, siéntate a descansar conmigo. Escucharé todo lo que te ha cansado.","En este mundo hay muchas cosas que pueden hacerme feliz. Por ejemplo, tomarte una hermosa foto, pasear por la calle con un clima hermoso, ver tu sonrisa, o ir a comer juntos algún día 🙄","¿Sabías que hay días en los que solo un mensaje tuyo es suficiente para hacerme feliz todo el día?","No necesito los días más resplandecientes, solo necesito que en los días más ordinarios sigas sentada a mi lado.","No te exijas demasiado, porque hay alguien siempre listo para calmarlo todo por ti... 🌷","Cualquier cosa que necesites, solo llámame\nEstaré ahí para ti mil veces","Esto es un abrazo, un beso, un suspiro\nEsto es amor, cariño, desvelo\nTomo prestadas las rimas y palabras para enviártelas"],"images":["./assets/sp/1.jpg","./assets/sp/2.jpg","./assets/sp/3.jpg","./assets/sp/4.jpg","./assets/sp/5.jpg","./assets/sp/6.jpg","./assets/sp/7.jpg","./assets/sp/8.jpg","./assets/sp/9.jpg","./assets/sp/10.jpg"]},"nguoithuong":{"name":"Para mi ser querido","tag":"Feliz y pacífico Festival de Mitad de Otoño","music":"./assets/bongtrang.mp3","messages":["¡Le deseo a mi ser querido y a su familia una temporada de Mitad de Otoño muy unida, llena de alegría y felicidad!","Deseo que todos los deseos de mi ser querido esta noche se hagan realidad.","Bajo la cálida luna llena, deseo que nuestra amistad y amor permanezcan fuertes para siempre."],"images":["./assets/1.jpg","./assets/2.jpg","./assets/3.jpg"]},"baotram":{"name":"Para Bảo Trân","tag":"Feliz y pacífico Festival de Mitad de Otoño","music":"./assets/bongtrang.mp3","messages":["🏮 ¡Feliz Festival de Mitad de Otoño, Bảo Trân!","🏮 Espero que esa pequeña siempre sonría y sea muy feliz","🏮 Te deseo a ti y a tu familia una muy feliz temporada de Mitad de Otoño","🏮 A través de los años persiguiendo la luna, espero que esa sonrisa siga ahí"],"images":["./assets/4.jpg"]},"lnam":{"name":"Para mi ser querido","tag":"Feliz y pacífico Festival de Mitad de Otoño","music":"./assets/bongtrang.mp3","messages":["¡Le deseo a mi ser querido y a su familia una temporada de Mitad de Otoño muy unida, llena de alegría y felicidad!","Deseo que todos los deseos de mi ser querido esta noche se hagan realidad.","A mi nena solo le toca ser feliz, de lo demás me encargo yo"],"images":["./assets/ln/1.jpg","./assets/ln/2.jpg","./assets/ln/3.jpg"]}}};
+
+    var _fetch = window.fetch;
+    window.fetch = function (input) {
+        var url = typeof input === 'string' ? input : (input && input.url) || '';
+        var args = arguments;
+        var self = this;
+        if (!/wishes\.json(\?|#|$)/.test(url)) return _fetch.apply(self, args);
+
+        function fallback() {
+            return Promise.resolve(new Response(JSON.stringify(WISHES_FALLBACK), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' }
+            }));
+        }
+        try {
+            return _fetch.apply(self, args).then(function (res) {
+                return res.ok ? res : fallback();
+            }, fallback);
+        } catch (e) {
+            return fallback();
+        }
+    };
+})();
+    </script>
+    <!-- Three.js & OrbitControls -->
+    <script src="./assets/three.min.js"></script>
+    <script src="./assets/OrbitControls.js"></script>
+    <script src="./assets/script.js"></script>
+
+    <script>
+/* ============================================================
+   PATCH LOCAL (Trungthu3D) - parte 2/2
+   Se carga DESPUES de assets/script.js
+   - Traduce al espanol los textos fijos de la interfaz.
+   - Añade la firma "creador / VicPersi".
+   - Añade palabras en español flotando dentro de la escena 3D.
+   ============================================================ */
+(function () {
+    'use strict';
+
+    var ES = {
+        clickHint: 'Toca la linterna para leer tu mensaje de Mediadoño',
+        musicTitle: 'Activar / Desactivar música',
+        closeTitle: 'Cerrar',
+        wishTitle: 'Mensaje',
+        wishTag: '✦ Festival de Mediadoño Feliz ✦',
+        wishText: '«Que tengas un Festival de Mediadoño cálido, tranquilo y lleno de amor junto a quienes más quieres.»',
+        imgAlt: 'Noche de luna llena',
+        errThree: 'Three.js no se cargó correctamente.',
+        errWebgl: 'WebGL no está disponible en este dispositivo. Prueba con Chrome o Edge actualizados y activa la aceleración por hardware.'
+    };
+
+    var $ = function (s) { return document.querySelector(s); };
+    function setText(el, txt) { if (el) el.textContent = txt; }
+    function setAttr(el, n, v) { if (el) el.setAttribute(n, v); }
+
+    /* El script empaquetado inyecta el HTML de forma sincrona al cargarse,
+       asi que a continuacion los textos originales siguen intactos.
+       wishes.json se resuelve despas (microtarea), por eso el titulo y el
+       tag personalizados se completan solos y no se tocan de nuevo aqui. */
+    setText($('.click-hint'), ES.clickHint);
+    setAttr($('#audio-btn'), 'title', ES.musicTitle);
+    setAttr($('#closeWishBtn'), 'title', ES.closeTitle);
+    setAttr($('#wishImage'), 'alt', ES.imgAlt);
+    setText($('#wishTitle'), ES.wishTitle);
+    setText($('#wishTag'), ES.wishTag);
+    setText($('#wishText'), ES.wishText);
+
+    /* ---------- FIRMA ---------- */
+    if (!document.querySelector('.vp-signature')) {
+        var css = document.createElement('style');
+        css.textContent = [
+            '.vp-signature{position:fixed;left:0;top:0;z-index:8;',
+            'text-align:center;pointer-events:none;user-select:none;',
+            'font-family:"Dancing Script",cursive;color:#ffd700;',
+            'opacity:0;transition:opacity 1.4s ease .8s;will-change:transform}',
+            '.vp-signature.on{opacity:.5}',
+            '.vp-signature .vp-role{font-family:"Quicksand",sans-serif;font-size:10px;',
+            'letter-spacing:5px;text-transform:uppercase;font-weight:600;',
+            'color:#ffb7c5;margin-bottom:2px;opacity:.9;',
+            'text-shadow:0 1px 5px rgba(0,0,0,.8)}',
+            '.vp-signature .vp-name{font-size:32px;line-height:1.1;font-weight:700;',
+            'letter-spacing:1px;text-shadow:0 0 14px rgba(255,215,0,.45),0 2px 6px rgba(0,0,0,.7)}',
+            '.vp-signature .vp-rule{width:66px;height:1px;margin:8px auto 0;',
+            'background:linear-gradient(90deg,transparent,rgba(255,215,0,.75),transparent)}',
+            '@media(max-width:768px){.vp-signature .vp-name{font-size:25px}',
+            '.vp-signature .vp-role{font-size:9px;letter-spacing:4px}}'
+        ].join('');
+        document.head.appendChild(css);
+
+        /* Cuatro firmas: dos abajo (esquinas) y dos arriba. Todas rebotan
+           por toda la pantalla. */
+        var SIGS = [
+            { role: 'creador', name: 'VicPersi', right: true, top: false },
+            { role: 'creador', name: 'VicPersi', right: false, top: false },
+            { role: 'creador', name: 'VicPersi', right: true, top: true },
+            { role: 'creador', name: 'VicPersi', right: false, top: true }
+        ];
+        var flyers = [];
+        SIGS.forEach(function (cfg) {
+            var el = document.createElement('div');
+            el.className = 'vp-signature';
+            el.innerHTML = '<div class="vp-role">' + cfg.role + '</div>' +
+                '<div class="vp-name">' + cfg.name + '</div>' +
+                '<div class="vp-rule"></div>';
+            document.body.appendChild(el);
+            flyers.push({
+                el: el,
+                x: 0, y: 0, w: 0, h: 0,
+                vx: (cfg.right ? -1 : 1) * (46 + Math.random() * 34),
+                vy: (cfg.top ? 1 : -1) * (40 + Math.random() * 30)
+            });
+        });
+
+        function place(it) {
+            var maxX = Math.max(0, window.innerWidth - it.w);
+            var maxY = Math.max(0, window.innerHeight - it.h);
+            it.x = Math.min(Math.max(it.x, 0), maxX);
+            it.y = Math.min(Math.max(it.y, 0), maxY);
+            it.el.style.transform = 'translate3d(' + it.x.toFixed(1) + 'px,' +
+                it.y.toFixed(1) + 'px,0)';
+        }
+
+        function startFlyers() {
+            flyers.forEach(function (it, i) {
+                var r = it.el.getBoundingClientRect();
+                it.w = r.width; it.h = r.height;
+                it.x = SIGS[i].right ? window.innerWidth - r.width - 22 : 22;
+                it.y = SIGS[i].top ? 22 : window.innerHeight - r.height - 26 - i * 12;
+                place(it);
+            });
+            requestAnimationFrame(function () {
+                flyers.forEach(function (it) { it.el.className = 'vp-signature on'; });
+            });
+        }
+
+        (function bounce() {
+            requestAnimationFrame(bounce);
+            if (!flyers[0].w) return;
+            var t = performance.now();
+            var dt = Math.min((t - (bounce.p || t)) / 1000, 0.05);
+            bounce.p = t;
+            flyers.forEach(function (it) {
+                it.x += it.vx * dt;
+                it.y += it.vy * dt;
+                var maxX = Math.max(0, window.innerWidth - it.w);
+                var maxY = Math.max(0, window.innerHeight - it.h);
+                var k = 0.92 + Math.random() * 0.2;
+                if (it.x <= 0) { it.x = 0; it.vx = Math.abs(it.vx) * k; }
+                if (it.x >= maxX) { it.x = maxX; it.vx = -Math.abs(it.vx) * k; }
+                if (it.y <= 0) { it.y = 0; it.vy = Math.abs(it.vy) * k; }
+                if (it.y >= maxY) { it.y = maxY; it.vy = -Math.abs(it.vy) * k; }
+                it.el.style.transform = 'translate3d(' + it.x.toFixed(1) + 'px,' +
+                    it.y.toFixed(1) + 'px,0)';
+            });
+        })();
+
+        window.addEventListener('resize', function () {
+            flyers.forEach(function (it) {
+                var r = it.el.getBoundingClientRect();
+                it.w = r.width; it.h = r.height;
+                place(it);
+            });
+        });
+
+        if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+            var fired = false;
+            var go = function () { if (fired) return; fired = true; startFlyers(); };
+            document.fonts.ready.then(go, go);
+            setTimeout(go, 2000);
+        } else {
+            setTimeout(startFlyers, 100);
+        }
+    }
+
+    /* ---------- PALABRAS FLOTANTES EN ESPANOL ---------- */
+    if (typeof scene === 'object' && typeof THREE === 'object') {
+        (function floatingWords() {
+            var WORDS = ['Mediadoño', 'Familia', 'Unión', 'Amor', 'Paz', 'Luz',
+                'Alegría', 'Tranquilidad', 'Reencuentro', 'Gratitud', 'Sueños',
+                'Bendición', 'Cariño', 'Amistad', 'Esperanza', 'Luna llena',
+                'Felicidad', 'Deseos', 'Sonrisa', 'Corazón'];
+            var COLORS = [0xffd700, 0xffb7c5, 0xffaa33, 0xfff3d6, 0xffc0cb];
+            var FONT = '"Dancing Script","Quicksand",Georgia,serif';
+            var MAXW = 460;
+
+            function hex(c) { return ('000000' + c.toString(16)).slice(-6); }
+
+            function makeTexture(txt, color) {
+                var pad = 30, fs = 82, w = 0;
+                var probe = document.createElement('canvas').getContext('2d');
+                probe.font = '700 ' + fs + 'px ' + FONT;
+                w = Math.ceil(probe.measureText(txt).width);
+                while (w > MAXW && fs > 32) {
+                    fs -= 4;
+                    probe.font = '700 ' + fs + 'px ' + FONT;
+                    w = Math.ceil(probe.measureText(txt).width);
+                }
+                var cv = document.createElement('canvas');
+                cv.width = w + pad * 2;
+                cv.height = fs + pad * 2;
+                var g = cv.getContext('2d');
+                g.font = '700 ' + fs + 'px ' + FONT;
+                g.textAlign = 'center';
+                g.textBaseline = 'middle';
+                g.shadowColor = 'rgba(255,205,110,.95)';
+                g.shadowBlur = 26;
+                g.fillStyle = '#' + hex(color);
+                g.fillText(txt, cv.width / 2, cv.height / 2);
+                g.shadowBlur = 9;
+                g.fillText(txt, cv.width / 2, cv.height / 2);
+                var t = new THREE.CanvasTexture(cv);
+                if (THREE.sRGBEncoding !== undefined) t.encoding = THREE.sRGBEncoding;
+                return t;
+            }
+
+            function build() {
+                var group = new THREE.Group();
+                scene.add(group);
+
+                var count = (typeof isMobile === 'boolean' && isMobile) ? 14 : 26;
+                var items = [];
+                for (var i = 0; i < count; i++) {
+                    var word = WORDS[(Math.random() * WORDS.length) | 0];
+                    var col = COLORS[(Math.random() * COLORS.length) | 0];
+                    var tex = makeTexture(word, col);
+                    var aspect = tex.image.width / tex.image.height;
+                    var mat = new THREE.SpriteMaterial({
+                        map: tex,
+                        transparent: true,
+                        opacity: 0,
+                        depthWrite: false,
+                        fog: true
+                    });
+                    var sp = new THREE.Sprite(mat);
+                    var h = 1.0 + Math.random() * 1.0;
+                    sp.scale.set(h * aspect, h, 1);
+                    sp.position.set(Math.random() * 46 - 23, -4 + Math.random() * 34, -18 + Math.random() * 26);
+                    group.add(sp);
+                    items.push({
+                        sp: sp,
+                        spd: 0.2 + Math.random() * 0.5,
+                        sway: 0.2 + Math.random() * 0.7,
+                        ph: Math.random() * 6.283,
+                        amp: 0.3 + Math.random() * 0.9,
+                        peak: 0.3 + Math.random() * 0.35
+                    });
+                }
+
+                var start = performance.now();
+                (function tick(now) {
+                    requestAnimationFrame(tick);
+                    var t = now || performance.now();
+                    var dt = Math.min((t - (tick.p || t)) / 1000, 0.05);
+                    tick.p = t;
+                    var reveal = Math.max(0, Math.min(1, (t - start - 1200) / 2500));
+                    for (var k = 0; k < items.length; k++) {
+                        var it = items[k];
+                        it.sp.position.y += it.spd * dt;
+                        it.sp.position.x += Math.sin(t * 0.0006 * it.sway + it.ph) * it.amp * dt;
+                        it.sp.material.opacity = it.peak * reveal *
+                            (0.6 + 0.4 * Math.sin(t * 0.0009 + it.ph));
+                        if (it.sp.position.y > 30) {
+                            it.sp.position.y = -4;
+                            it.sp.position.x = Math.random() * 46 - 23;
+                            it.sp.position.z = -18 + Math.random() * 26;
+                        }
+                    }
+                })(start);
+            }
+
+            /* Las fuentes de Google tardan en cargar: se espera para que el
+               texto no se grabe en el canvas con la fuente de respaldo.
+               Con red lenta o sin internet, se dibuja igual a los 2.5 s. */
+            var done = false;
+            function once() { if (done) return; done = true; build(); }
+            if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+                document.fonts.ready.then(once, once);
+                setTimeout(once, 2500);
+            } else {
+                setTimeout(once, 100);
+            }
+        })();
+    }
+
+    /* Mensajes de error de la escena 3D en espanol. */
+    if (typeof window.showError === 'function') {
+        var _showError = window.showError;
+        window.showError = function (message) {
+            var m = String(message || '');
+            _showError(/WebGL/i.test(m) ? ES.errWebgl : ES.errThree);
+        };
+    }
+})();
+    </script></body>
+
+</html>
