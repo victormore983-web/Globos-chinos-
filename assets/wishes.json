@@ -1,0 +1,92 @@
+{
+  "users": {
+    "123": {
+      "name": "Para ti",
+      "tag": "Feliz y pacífico Festival de Mitad de Otoño",
+      "music": "./assets/1.mp3",
+      "messages": [
+        "¡Te deseo a ti y a tu familia una temporada de Mitad de Otoño muy unida, llena de alegría y felicidad!",
+        "Deseo que todos tus deseos de esta noche se hagan realidad.",
+        "Bajo la cálida luna llena, deseo que nuestra amistad y amor permanezcan fuertes para siempre."
+      ],
+      "images": [
+        "./assets/1.jpg",
+        "./assets/2.jpg",
+        "./assets/3.jpg"
+      ]
+    },
+    "sangp": {
+      "name": "Para Dịuuo",
+      "tag": "Feliz y pacífico Festival de Mitad de Otoño",
+      "music": "./assets/bongtrang.mp3",
+      "messages": [
+        "No importa lo ocupada que estés, recuerda comer bien, no te saltes ninguna comida, pequeña 🌷",
+        "En esta Mitad de Otoño te escribo una canción de amor. Acordes tengo pocos, ¡pero encajamos mucho!",
+        "Caminemos juntos este otoño, para que ambos vayamos juntos a celebrar la Mitad de Otoño.",
+        "Si estás cansada, siéntate a descansar conmigo. Escucharé todo lo que te ha cansado.",
+        "En este mundo hay muchas cosas que pueden hacerme feliz. Por ejemplo, tomarte una hermosa foto, pasear por la calle con un clima hermoso, ver tu sonrisa, o ir a comer juntos algún día 🙄",
+        "¿Sabías que hay días en los que solo un mensaje tuyo es suficiente para hacerme feliz todo el día?",
+        "No necesito los días más resplandecientes, solo necesito que en los días más ordinarios sigas sentada a mi lado.",
+        "No te exijas demasiado, porque hay alguien siempre listo para calmarlo todo por ti... 🌷",
+        "Cualquier cosa que necesites, solo llámame\nEstaré ahí para ti mil veces",
+        "Esto es un abrazo, un beso, un suspiro\nEsto es amor, cariño, desvelo\nTomo prestadas las rimas y palabras para enviártelas"
+      ],
+      "images": [
+        "./assets/sp/1.jpg",
+        "./assets/sp/2.jpg",
+        "./assets/sp/3.jpg",
+        "./assets/sp/4.jpg",
+        "./assets/sp/5.jpg",
+        "./assets/sp/6.jpg",
+        "./assets/sp/7.jpg",
+        "./assets/sp/8.jpg",
+        "./assets/sp/9.jpg",
+        "./assets/sp/10.jpg"
+      ]
+    },
+    "nguoithuong": {
+      "name": "Para mi ser querido",
+      "tag": "Feliz y pacífico Festival de Mitad de Otoño",
+      "music": "./assets/bongtrang.mp3",
+      "messages": [
+        "¡Le deseo a mi ser querido y a su familia una temporada de Mitad de Otoño muy unida, llena de alegría y felicidad!",
+        "Deseo que todos los deseos de mi ser querido esta noche se hagan realidad.",
+        "Bajo la cálida luna llena, deseo que nuestra amistad y amor permanezcan fuertes para siempre."
+      ],
+      "images": [
+        "./assets/1.jpg",
+        "./assets/2.jpg",
+        "./assets/3.jpg"
+      ]
+    },
+    "baotram": {
+      "name": "Para Bảo Trân",
+      "tag": "Feliz y pacífico Festival de Mitad de Otoño",
+      "music": "./assets/bongtrang.mp3",
+      "messages": [
+        "🏮 ¡Feliz Festival de Mitad de Otoño, Bảo Trân!",
+        "🏮 Espero que esa pequeña siempre sonría y sea muy feliz",
+        "🏮 Te deseo a ti y a tu familia una muy feliz temporada de Mitad de Otoño",
+        "🏮 A través de los años persiguiendo la luna, espero que esa sonrisa siga ahí"
+      ],
+      "images": [
+        "./assets/4.jpg"
+      ]
+    },
+    "lnam": {
+      "name": "Para mi ser querido",
+      "tag": "Feliz y pacífico Festival de Mitad de Otoño",
+      "music": "./assets/bongtrang.mp3",
+      "messages": [
+        "¡Le deseo a mi ser querido y a su familia una temporada de Mitad de Otoño muy unida, llena de alegría y felicidad!",
+        "Deseo que todos los deseos de mi ser querido esta noche se hagan realidad.",
+        "A mi nena solo le toca ser feliz, de lo demás me encargo yo"
+      ],
+      "images": [
+        "./assets/ln/1.jpg",
+        "./assets/ln/2.jpg",
+        "./assets/ln/3.jpg"
+      ]
+    }
+  }
+}
